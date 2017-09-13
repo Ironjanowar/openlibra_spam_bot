@@ -13,6 +13,10 @@ defmodule OpenlibraSpamBot.Bot do
     answer msg, "Helloooo", bot: name
   end
 
+  def handle({:command, "formats", msg}, name, _) do
+    answer msg, OpenlibraSpamBot.Utils.get_formats, bot: name, parse_mode: "HTML"
+  end
+
   def handle({:message, %{document: %{file_id: doc}, message_id: mid} = msg}, name, _) do
     Logger.info "Document found with ID: #{doc}"
     {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc)

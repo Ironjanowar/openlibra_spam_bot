@@ -5,4 +5,15 @@ defmodule OpenlibraSpamBot.Utils do
 
     {message, markup}
   end
+
+  defp format_line("." <> _ = format), do: "  - #{format}"
+  defp format_line(format), do: " - .#{format}"
+
+  def get_formats() do
+    formats = Telex.Config.get(:openlibra_spam_bot, :formats, [])
+    |> Enum.map(&format_line/1)
+    |> Enum.join("\n")
+
+    "<i>This are the current formats that I admit:</i>\n<code>#{formats}</code>"
+  end
 end
