@@ -17,10 +17,14 @@ defmodule OpenlibraSpamBot.Bot do
     answer msg, OpenlibraSpamBot.Utils.get_formats, bot: name, parse_mode: "HTML"
   end
 
-  def handle({:message, %{document: %{file_id: doc}, message_id: mid} = msg}, name, _) do
+  def handle({:message, %{document: %{file_id: doc, file_name: file_name}, message_id: mid} = msg}, name, _) do
     Logger.info "Document found with ID: #{doc}"
-    {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc)
-    answer msg, message, bot: name, reply_markup: markup, reply_to_message_id: mid
+    if OpenlibraSpamBot.Utils.is_valid_format?(file_name) do
+      {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc)
+      answer msg, message, bot: name, reply_markup: markup, reply_to_message_id: mid
+    else
+      Logger.info "#{file_name}[#{doc}] hasn't have a valid format"
+    end
   end
 
   def handle({:callback_query, %{data: "forward:yes:" <> doc, message: %{message_id: mid}} = msg}, name, _) do

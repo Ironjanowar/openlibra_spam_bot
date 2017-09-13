@@ -9,11 +9,28 @@ defmodule OpenlibraSpamBot.Utils do
   defp format_line("." <> _ = format), do: "  - #{format}"
   defp format_line(format), do: " - .#{format}"
 
+  defp remove_point("." <> meh), do: meh
+  defp remove_point(meh), do: meh
+
+  def get_raw_formats() do
+    Telex.Config.get(:openlibra_spam_bot, :formats, [])
+    |> Enum.map(&remove_point/1)
+  end
+
   def get_formats() do
-    formats = Telex.Config.get(:openlibra_spam_bot, :formats, [])
+    formats = get_raw_formats()
     |> Enum.map(&format_line/1)
     |> Enum.join("\n")
 
     "<i>This are the current formats that I admit:</i>\n<code>#{formats}</code>"
+  end
+
+  def is_valid_format?(file_name) do
+    format = file_name
+    |> String.split(".")
+    |> Enum.reverse
+    |> (fn [h | _] -> h end).()
+
+    format in get_raw_formats()
   end
 end
