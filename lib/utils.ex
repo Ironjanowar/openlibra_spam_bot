@@ -5,8 +5,4 @@ defmodule OpenlibraSpamBot.Utils do
 
     {message, markup}
   end
-
-  def forward_document(doc, name, target \\ "@theIronChannel") do
-    Telex.send_document target, doc, bot: name
-  end
 end

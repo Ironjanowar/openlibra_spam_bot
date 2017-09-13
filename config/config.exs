@@ -3,4 +3,5 @@
 use Mix.Config
 
 config :openlibra_spam_bot,
-  token: "TOKEN"
+  token: "TOKEN",
+  channel: "@channel"

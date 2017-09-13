@@ -5,7 +5,7 @@ defmodule OpenlibraSpamBot.Bot do
   use Telex.Bot, name: @bot
   use Telex.Dsl
 
-  @openlibra_channel "@openlibra_channel"
+  @channel Telex.Config.get(@bot, :channel, "@theIronChannel")
 
   require Logger
 
@@ -13,30 +13,21 @@ defmodule OpenlibraSpamBot.Bot do
     answer msg, "Helloooo", bot: name
   end
 
-  def handle({_, _, %{document: %{file_id: doc}} = msg}, name, _) do
-    Logger.info "Document found"
+  def handle({:message, %{document: %{file_id: doc}, message_id: mid} = msg}, name, _) do
+    Logger.info "Document found with ID: #{doc}"
     {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc)
-    answer msg, message, bot: name, reply_markup: markup
+    answer msg, message, bot: name, reply_markup: markup, reply_to_message_id: mid
   end
 
-  def handle({:command, "test", %{from: %{id: cid}, message_id: mid}=msg}, name, _) do
-    # {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question
-    # answer msg, message, bot: name, reply_markup: markup, reply_to_message_id: mid
-
-    Logger.info "Test received"
-
-    Telex.send_message "@theIronChannel", "Helloooo testerino!", bot: name
-  end
-
-  def handle({:callback_query, %{message: %{chat: %{id: id}}, data: "forward:yes:" <> doc} = msg}, name, _) do
+  def handle({:callback_query, %{data: "forward:yes:" <> doc, message: %{message_id: mid}} = msg}, name, _) do
     Logger.info "Forwarding document"
-    OpenlibraSpamBot.Utils.forward_document(doc, msg, name)
+    Telex.send_document @channel, doc, bot: name
 
-    edit :inline, "Archivo reenviado a #{@openlibra_channel}", bot: name
+    edit :inline, msg, "Archivo reenviado a #{@channel}", bot: name, reply_to_message_id: mid
   end
 
-  def handle({:callback_query, %{message: %{chat: %{id: id}}, data: "forward:no"} = msg}, name, _) do
+  def handle({:callback_query, %{data: "forward:no", message: %{message_id: mid}} = msg}, name, _) do
     Logger.info "Not forwarding"
-    edit :inline, "El archivo no se reenviará", bot: name
+    edit :inline, msg, "El archivo no se reenviará", bot: name, reply_to_message_id: mid
   end
 end
