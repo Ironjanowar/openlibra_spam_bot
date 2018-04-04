@@ -3,6 +3,6 @@
 use Mix.Config
 
 config :openlibra_spam_bot,
-  token: "TOKEN",
-  channel: "@channel",
-  formats: ["format1", "format2"]
+  token: {:system, "BOT_TOKEN"},
+  channel: {:system, "TELEGRAM_CHANNEL"},
+  formats: {:system, "FILE_FORMATS"}

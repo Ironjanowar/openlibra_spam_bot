@@ -7,18 +7,22 @@ defmodule OpenlibraSpamBot do
   def start(_, _) do
     import Supervisor.Spec
 
+    token = Telex.Config.get(:openlibra_spam_bot, :token)
+
     children = [
       supervisor(Telex, []),
-      supervisor(OpenlibraSpamBot.Bot, [:updates, Application.get_env(:openlibra_spam_bot, :token)]),
+      supervisor(OpenlibraSpamBot.Bot, [:updates, token])
     ]
 
     opts = [strategy: :one_for_one, name: OpenlibraSpamBot]
+
     case Supervisor.start_link(children, opts) do
       {:ok, _} = ok ->
-        Logger.info "Starting OpenlibraSpamBot"
+        Logger.info("Starting OpenlibraSpamBot")
         ok
+
       error ->
-        Logger.error "Error starting OpenlibraSpamBot"
+        Logger.error("Error starting OpenlibraSpamBot")
         error
     end
   end
