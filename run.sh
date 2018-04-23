@@ -4,7 +4,10 @@ export BOT_TOKEN=$(cat bot.token)
 
 echo "Getting deps"
 mix deps.get
-apk add make
+
+echo "Installing make"
+apk add make # Dependency needed and not in alpine image
+
 echo "Compiling..."
 mix compile
 

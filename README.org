@@ -1,0 +1,11 @@
+* Openlibra Spam Bot!
+This bot forwards files from a Telegram chat group to a Telegram channel
+
+** Run with docker
+ - Create a ~bot.token~ file with your bot token
+ - Run ~./run_docker.sh~
+
+** Local run
+ - Create a ~bot.token~ file as above
+ - Comment the ~apk add make~ line from the ~run.sh~ script
+ - Run ~./run.sh~
