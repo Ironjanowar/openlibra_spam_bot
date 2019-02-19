@@ -1,41 +1,66 @@
 defmodule OpenlibraSpamBot.Bot do
   @bot :openlibra_spam_bot
-  def bot(), do: @bot
 
-  use Telex.Bot, name: @bot
-  use Telex.Dsl
-
-  @channel Telex.Config.get(@bot, :channel, "@theIronChannel")
+  use ExGram.Bot,
+    name: @bot
 
   require Logger
 
-  def handle({:command, "start", msg}, name, _) do
-    answer msg, "Helloooo", bot: name
+  @channel ExGram.Config.get(@bot, :channel, "@theIronChannel")
+
+  def bot(), do: @bot
+
+  def handle({:command, "start", _msg}, context) do
+    answer(context, "Helloooo")
   end
 
-  def handle({:command, "formats", msg}, name, _) do
-    answer msg, OpenlibraSpamBot.Utils.get_formats, bot: name, parse_mode: "HTML"
+  def handle({:command, "formats", _msg}, context) do
+    answer(context, OpenlibraSpamBot.Utils.get_formats(), parse_mode: "HTML")
   end
 
-  def handle({:message, %{document: %{file_id: doc, file_name: file_name}, message_id: mid} = msg}, name, _) do
-    Logger.info "Document found with ID: #{doc}"
+  def handle(
+        {:message, %{document: %{file_id: doc, file_name: file_name}, message_id: mid}},
+        context
+      ) do
+    Logger.info("Document found with ID: #{doc}")
+
     if OpenlibraSpamBot.Utils.is_valid_format?(file_name) do
-      {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc)
-      answer msg, message, bot: name, reply_markup: markup, reply_to_message_id: mid
+      {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc, @channel)
+      answer(context, message, reply_markup: markup, reply_to_message_id: mid)
     else
-      Logger.info "#{file_name}[#{doc}] hasn't have a valid format"
+      Logger.info("#{file_name}[#{doc}] doesn't have a valid format")
     end
   end
 
-  def handle({:callback_query, %{data: "forward:yes:" <> doc, message: %{message_id: mid}} = msg}, name, _) do
-    Logger.info "Forwarding document"
-    Telex.send_document @channel, doc, bot: name
+  def handle(
+        {:callback_query, %{data: "forward:yes:" <> doc, message: %{message_id: mid}}},
+        context
+      ) do
+    Logger.info("Forwarding document with ID: #{doc}")
 
-    edit :inline, msg, "Archivo reenviado a #{@channel}", bot: name, reply_to_message_id: mid
+    case ExGram.send_document(@channel, doc) do
+      {:ok, _} = ok ->
+        ok |> inspect |> Logger.debug()
+        edit(context, :inline, "Archivo reenviado a #{@channel}", reply_to_message_id: mid)
+
+      {:error, _} = error ->
+        error |> inspect |> Logger.debug()
+
+        edit(
+          context,
+          :inline,
+          "Ha habido un error reenviando el archivo a #{@channel}",
+          reply_to_message_id: mid
+        )
+    end
   end
 
-  def handle({:callback_query, %{data: "forward:no", message: %{message_id: mid}} = msg}, name, _) do
-    Logger.info "Not forwarding"
-    edit :inline, msg, "El archivo no se reenviará", bot: name, reply_to_message_id: mid
+  def handle({:callback_query, %{data: "forward:no", message: %{message_id: mid}}}, context) do
+    Logger.info("Not forwarding")
+    edit(context, :inline, "El archivo no se reenviará", reply_to_message_id: mid)
+  end
+
+  def handle(_, _) do
+    :unrecognized
   end
 end
