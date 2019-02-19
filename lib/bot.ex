@@ -28,7 +28,7 @@ defmodule OpenlibraSpamBot.Bot do
       {message, markup} = OpenlibraSpamBot.Utils.generate_forward_question(doc, @channel)
       answer(context, message, reply_markup: markup, reply_to_message_id: mid)
     else
-      Logger.info("#{file_name}[#{doc}] hasn't have a valid format")
+      Logger.info("#{file_name}[#{doc}] doesn't have a valid format")
     end
   end
 
@@ -37,9 +37,22 @@ defmodule OpenlibraSpamBot.Bot do
         context
       ) do
     Logger.info("Forwarding document with ID: #{doc}")
-    ExGram.send_document(@channel, doc) |> inspect |> Logger.debug()
 
-    edit(context, :inline, "Archivo reenviado a #{@channel}", reply_to_message_id: mid)
+    case ExGram.send_document(@channel, doc) do
+      {:ok, _} = ok ->
+        ok |> inspect |> Logger.debug()
+        edit(context, :inline, "Archivo reenviado a #{@channel}", reply_to_message_id: mid)
+
+      {:error, _} = error ->
+        error |> inspect |> Logger.debug()
+
+        edit(
+          context,
+          :inline,
+          "Ha habido un error reenviando el archivo a #{@channel}",
+          reply_to_message_id: mid
+        )
+    end
   end
 
   def handle({:callback_query, %{data: "forward:no", message: %{message_id: mid}}}, context) do
