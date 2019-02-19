@@ -1,0 +1,12 @@
+[Unit]
+Description=Openlibra Bot
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/openlibra_spam_bot
+ExecStart=make run
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
