@@ -19,6 +19,8 @@ defmodule OpenlibraSpamBot do
     case Supervisor.start_link(children, opts) do
       {:ok, _} = ok ->
         Logger.info("Starting OpenlibraSpamBot")
+        formats = ExGram.Config.get(:openlibra_spam_bot, :formats) |> String.replace(":", ", ")
+        Logger.info("Formats: #{formats}")
         ok
 
       error ->
