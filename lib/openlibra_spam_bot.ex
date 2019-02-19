@@ -7,11 +7,11 @@ defmodule OpenlibraSpamBot do
   def start(_, _) do
     import Supervisor.Spec
 
-    token = Telex.Config.get(:openlibra_spam_bot, :token)
+    token = ExGram.Config.get(:openlibra_spam_bot, :token)
 
     children = [
-      supervisor(Telex, []),
-      supervisor(OpenlibraSpamBot.Bot, [:updates, token])
+      supervisor(ExGram, []),
+      supervisor(OpenlibraSpamBot.Bot, [:polling, token])
     ]
 
     opts = [strategy: :one_for_one, name: OpenlibraSpamBot]

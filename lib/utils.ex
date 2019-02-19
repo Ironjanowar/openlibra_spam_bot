@@ -3,7 +3,7 @@ defmodule OpenlibraSpamBot.Utils do
     message = "Quieres reenviar este archivo a #{target}?"
 
     markup =
-      Telex.Dsl.create_inline([
+      ExGram.Dsl.create_inline([
         [
           [text: "Si", callback_data: "forward:yes:#{document}"],
           [text: "No", callback_data: "forward:no"]
@@ -24,7 +24,7 @@ defmodule OpenlibraSpamBot.Utils do
   defp format_formats(formats), do: formats |> String.split(":")
 
   def get_raw_formats() do
-    Telex.Config.get(:openlibra_spam_bot, :formats, "")
+    ExGram.Config.get(:openlibra_spam_bot, :formats, "")
     |> format_formats()
     |> Enum.map(&remove_point/1)
   end
@@ -35,7 +35,13 @@ defmodule OpenlibraSpamBot.Utils do
       |> Enum.map(&format_line/1)
       |> Enum.join("\n")
 
-    "<i>This are the current formats that I admit:</i>\n<code>#{formats}</code>"
+    case formats do
+      "" ->
+        "No formats specified, I would not forward any files.\nPlease contact the bot administrator"
+
+      formats ->
+        "<i>This are the current formats that I admit:</i>\n<code>#{formats}</code>"
+    end
   end
 
   def is_valid_format?(file_name) do
