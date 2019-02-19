@@ -7,7 +7,7 @@ defmodule OpenlibraSpamBot do
   def start(_, _) do
     import Supervisor.Spec
 
-    token = ExGram.Config.get(:openlibra_spam_bot, :token)
+    token = ExGram.Config.get(:ex_gram, :token)
 
     children = [
       supervisor(ExGram, []),

@@ -1,5 +1,5 @@
 defmodule OpenlibraSpamBot.Utils do
-  def generate_forward_question(document, target \\ "@openlibra_channel") do
+  def generate_forward_question(document, target) do
     message = "Quieres reenviar este archivo a #{target}?"
 
     markup =

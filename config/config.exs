@@ -2,7 +2,9 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
+config :ex_gram,
+  token: {:system, "BOT_TOKEN"}
+
 config :openlibra_spam_bot,
-  token: {:system, "BOT_TOKEN"},
   channel: {:system, "TELEGRAM_CHANNEL"},
   formats: {:system, "FILE_FORMATS"}
