@@ -20,6 +20,8 @@ defmodule OpenlibraSpamBot do
       {:ok, _} = ok ->
         Logger.info("Starting OpenlibraSpamBot")
         formats = ExGram.Config.get(:openlibra_spam_bot, :formats) |> String.replace(":", ", ")
+        channel = ExGram.Config.get(:openlibra_spam_bot, :channel)
+        Logger.info("Channel: #{channel}")
         Logger.info("Formats: #{formats}")
         ok
 

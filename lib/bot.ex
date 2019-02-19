@@ -6,7 +6,7 @@ defmodule OpenlibraSpamBot.Bot do
 
   require Logger
 
-  @channel ExGram.Config.get(@bot, :channel, "@theIronChannel")
+  @channel ExGram.Config.get(:openlibra_spam_bot, :channel, "@theIronChannel")
 
   def bot(), do: @bot
 
