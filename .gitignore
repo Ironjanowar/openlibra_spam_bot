@@ -21,3 +21,9 @@ erl_crash.dump
 
 # Token
 *.token
+
+# Env file
+.env
+
+# Logs
+log/

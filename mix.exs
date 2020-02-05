@@ -22,7 +22,11 @@ defmodule OpenlibraSpamBot.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_gram, "~> 0.5.0"}
+      {:ex_gram, "~> 0.10"},
+      {:tesla, "~> 1.2"},
+      {:hackney, "~> 1.12"},
+      {:jason, ">= 1.0.0"},
+      {:logger_file_backend, "0.0.11"}
     ]
   end
 end
