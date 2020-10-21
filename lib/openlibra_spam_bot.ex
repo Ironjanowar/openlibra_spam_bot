@@ -11,7 +11,8 @@ defmodule OpenlibraSpamBot do
 
     children = [
       supervisor(ExGram, []),
-      supervisor(OpenlibraSpamBot.Bot, [:polling, token])
+      supervisor(OpenlibraSpamBot.Bot, [:polling, token]),
+      OpenlibraSpamBot.DocumentCache
     ]
 
     opts = [strategy: :one_for_one, name: OpenlibraSpamBot]

@@ -1,14 +1,18 @@
 defmodule OpenlibraSpamBot.Utils do
-  def generate_forward_question(document, target) do
+  alias OpenlibraSpamBot.DocumentCache
+
+  def generate_forward_question(message_id, document, target) do
     message = "Quieres reenviar este archivo a #{target}?"
 
     markup =
       ExGram.Dsl.create_inline([
         [
-          [text: "Si", callback_data: "forward:yes:#{document}"],
+          [text: "Si", callback_data: "forward:yes:#{message_id}"],
           [text: "No", callback_data: "forward:no"]
         ]
       ])
+
+    DocumentCache.cache_document(message_id, document)
 
     {message, markup}
   end
