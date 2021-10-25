@@ -2,7 +2,8 @@ defmodule OpenlibraSpamBot.Utils do
   alias OpenlibraSpamBot.DocumentCache
 
   def generate_forward_question(message_id, document, target) do
-    message = "Quieres reenviar este archivo a #{target}?"
+    formatted_target = Enum.join(target, ", ")
+    message = "Quieres reenviar este archivo a: #{formatted_target}?"
 
     markup =
       ExGram.Dsl.create_inline([
@@ -25,7 +26,7 @@ defmodule OpenlibraSpamBot.Utils do
   defp remove_point(meh), do: meh
 
   # Yep...
-  defp format_formats(formats), do: formats |> String.split(":")
+  defp format_formats(formats), do: formats |> String.split(":") |> Enum.map(&String.trim/1)
 
   def get_raw_formats() do
     ExGram.Config.get(:openlibra_spam_bot, :formats, "")
@@ -56,5 +57,11 @@ defmodule OpenlibraSpamBot.Utils do
       |> (fn [h | _] -> h end).()
 
     format in get_raw_formats()
+  end
+
+  def get_channels() do
+    ExGram.Config.get(:openlibra_spam_bot, :channels, "@theIronChannel")
+    |> String.split(":")
+    |> Enum.map(&String.trim/1)
   end
 end
