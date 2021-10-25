@@ -5,14 +5,12 @@ defmodule OpenlibraSpamBot do
   require Logger
 
   def start(_, _) do
-    import Supervisor.Spec
-
     token = ExGram.Config.get(:ex_gram, :token)
 
     children = [
-      supervisor(ExGram, []),
-      supervisor(OpenlibraSpamBot.Bot, [:polling, token]),
-      OpenlibraSpamBot.DocumentCache
+      ExGram,
+      OpenlibraSpamBot.DocumentCache,
+      {OpenlibraSpamBot.Bot, [method: :polling, token: token]}
     ]
 
     opts = [strategy: :one_for_one, name: OpenlibraSpamBot]

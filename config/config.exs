@@ -6,7 +6,7 @@ config :ex_gram,
   token: {:system, "BOT_TOKEN"}
 
 config :openlibra_spam_bot,
-  channel: {:system, "TELEGRAM_CHANNEL"},
+  channels: {:system, "TELEGRAM_CHANNELS"},
   formats: {:system, "FILE_FORMATS"}
 
 config :logger,
